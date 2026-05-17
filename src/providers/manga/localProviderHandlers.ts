@@ -5,11 +5,14 @@ import { mangafire } from "./scrapers/mangafire.js";
 import { AniList } from "../mapper/anilist.js";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
+import { fileURLToPath } from "url";
 
 const DEFAULT_ATSU_TYPES = "Manga,Manwha,Manhua,OEL";
 const anilist = new AniList();
 const LOCALHOST_HOSTNAMES = new Set(["localhost", "127.0.0.1", "::1"]);
-const MANGA_HOME_FALLBACK_DIR = nodePath.join(process.cwd(), "fallback", "manga-home");
+const __dirname = nodePath.dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = nodePath.resolve(__dirname, "..", "..", "..");
+const MANGA_HOME_FALLBACK_DIR = nodePath.join(PROJECT_ROOT, "fallback", "manga-home");
 
 type HomeFallbackSnapshot = {
   provider: string;
