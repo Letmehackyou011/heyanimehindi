@@ -75,7 +75,7 @@ const readDocSection = (section: DocSection) => {
 };
 
 const buildEndpointsMarkdown = () => {
-    const filePath = path.join(PROJECT_ROOT, "endpoints.json");
+    const filePath = path.join(PROJECT_ROOT, "endpoints", "endpoints.json");
     const raw = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(raw) as {
         generatedAt?: string;
@@ -222,7 +222,7 @@ app.get(`${BASE_PATH}/docs/llm`, async (c) => {
 
 app.get(`${BASE_PATH}/docs/endpoints-json`, (c) => {
         try {
-                const filePath = path.join(PROJECT_ROOT, "endpoints.json");
+        const filePath = path.join(PROJECT_ROOT, "endpoints", "endpoints.json");
                 const raw = fs.readFileSync(filePath, "utf-8");
                 return c.json(JSON.parse(raw));
         } catch {
