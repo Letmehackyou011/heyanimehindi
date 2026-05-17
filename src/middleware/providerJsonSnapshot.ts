@@ -2,6 +2,7 @@ import type { MiddlewareHandler } from "hono";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import nodePath from "node:path";
+import { fileURLToPath } from "url";
 import { canonicalStore, type SourceValidationCandidate } from "../lib/canonicalStore.js";
 import { log, logRateLimited } from "../config/logger.js";
 
@@ -34,7 +35,9 @@ type ProviderSnapshotEnvelope = {
   data: unknown;
 };
 
-const SNAPSHOT_ROOT_DIR = nodePath.join(process.cwd(), "fallback", "provider-json");
+const __dirname = nodePath.dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = nodePath.resolve(__dirname, "..", "..");
+const SNAPSHOT_ROOT_DIR = nodePath.join(PROJECT_ROOT, "fallback", "provider-json");
 const JSON_CONTENT_TYPE = "application/json";
 const MAX_SNAPSHOT_BYTES = 2 * 1024 * 1024;
 const CANONICAL_WRITE_MAX_CONCURRENCY = Math.max(
