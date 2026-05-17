@@ -1,4 +1,4 @@
-import app from "../dist/src/server.js";
+import app from "../src/server";
 import { handle } from "hono/vercel";
 
 const handler = handle(app);
