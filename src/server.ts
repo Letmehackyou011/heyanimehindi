@@ -1,6 +1,7 @@
 import https from "https";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { timingSafeEqual } from "node:crypto";
 
 import { Hono } from "hono";
@@ -28,6 +29,11 @@ import { providerJsonSnapshot } from "./middleware/providerJsonSnapshot.js";
 import { startCanonicalBackgroundJobs } from "./services/canonicalJobs.js";
 
 import pkgJson from "../package.json" with { type: "json" };
+
+// Get the directory of the current module for reliable file resolution in serverless environments
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, "..");
 
 //
 const BASE_PATH = "/api/v2" as const;
@@ -64,12 +70,12 @@ const isAuthorizedWithAdminSecret = (provided: string, configured: string) => {
 };
 
 const readDocSection = (section: DocSection) => {
-    const docsDir = path.join(process.cwd(), "src", "docs");
+    const docsDir = path.join(PROJECT_ROOT, "src", "docs");
     return fs.readFileSync(path.join(docsDir, `${section}.md`), "utf-8");
 };
 
 const buildEndpointsMarkdown = () => {
-    const filePath = path.join(process.cwd(), "endpoints.json");
+    const filePath = path.join(PROJECT_ROOT, "endpoints.json");
     const raw = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(raw) as {
         generatedAt?: string;
@@ -178,7 +184,7 @@ if (isPersonalDeployment) {
 }
 
 // if (env.ANIWATCH_API_DEPLOYMENT_ENV === DeploymentEnv.NODEJS) {
-app.use("/", serveStatic({ root: "public" }));
+app.use("/", serveStatic({ root: path.join(PROJECT_ROOT, "public") }));
 // }
 
 app.get("/health", (c) => c.text("daijoubu", { status: 200 }));
@@ -216,7 +222,7 @@ app.get(`${BASE_PATH}/docs/llm`, async (c) => {
 
 app.get(`${BASE_PATH}/docs/endpoints-json`, (c) => {
         try {
-                const filePath = path.join(process.cwd(), "endpoints.json");
+                const filePath = path.join(PROJECT_ROOT, "endpoints.json");
                 const raw = fs.readFileSync(filePath, "utf-8");
                 return c.json(JSON.parse(raw));
         } catch {
