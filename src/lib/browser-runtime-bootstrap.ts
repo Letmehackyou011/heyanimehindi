@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { accessSync, constants, existsSync, readdirSync, statSync } from "node:fs";
 import nodePath from "node:path";
+import { fileURLToPath } from "url";
 import { Logger } from "../utils/logger.js";
 
 type BootstrapResult = {
@@ -12,8 +13,10 @@ const isLinux = process.platform === "linux";
 const isWindows = process.platform === "win32";
 const isMac = process.platform === "darwin";
 const AUTO_INSTALL_ENABLED = String(process.env.CF_BYPASS_AUTO_INSTALL || "true").toLowerCase() !== "false";
+const __dirname = nodePath.dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = nodePath.resolve(__dirname, "..", "..");
 const LOCAL_BROWSER_CACHE_DIR =
-  process.env.CF_BYPASS_BROWSER_CACHE_DIR || nodePath.join(process.cwd(), ".cache", "browser-runtime");
+  process.env.CF_BYPASS_BROWSER_CACHE_DIR || nodePath.join(PROJECT_ROOT, ".cache", "browser-runtime");
 
 const CHROME_CANDIDATES = [
   "google-chrome-stable",
